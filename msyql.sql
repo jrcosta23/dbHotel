@@ -125,9 +125,37 @@ select * from quartos where cafeDaManha = "sim" and situacao = "não";
 select * from  quartos where varanda = "sim" and cafeDaManha = "sim"  and situacao = "não";
 select * from  quartos where  preco < 600.00 and situacao = "não";
  
+ /* datapedido timestamp  default  significa quwe a data  do pedido  sera  a mesma  do sistema, ou seja  a data atual
+ statuspedido significa  que a  situacao do pedido  sera  uma das seguintes opcoes: pendente,  finalizadi, cancelado */
+ 
+create table pedido (
+   idpedido int primary key auto_increment,
+   datapedido timestamp default current_timestamp,
+   stastuspedido enum("penedente", "finalizado", "cancela") not null,
+   idCliente int  not null,
+   foreign key (idCliente)  references cliente(idCliente)
+
+);
+alter table pedido modify column stastuspedido enum("pendente", "finalizado", "cancelado") not null;
  
  
+ insert  into  pedido (stastuspedido, idCliente) values ("pendente",  1);
+ insert  into  pedido (stastuspedido, idCliente) values ("finalizado", 4);
  
+ select * from pedido;
+ 
+ create table reservas (
+    idreserva int primary key auto_increment,
+    idpedido  int  not null,
+    idquarto  int  not null,
+    foreign key (idpedido) references pedido(idpedido),
+    foreign key (idquarto) references quartos(idquarto)
+    );
+    
+    
+ 
+ 
+ describe pedido;
  
  
  create table cliente (
@@ -142,22 +170,26 @@ select * from  quartos where  preco < 600.00 and situacao = "não";
  validade  date not null,
  cvv char(3) not null,
  checkin datetime not null, 
- checkout datetime not null,
- idquarto int not null,
- foreign key (idquarto) references quartos (idquarto)
- 
+ checkout datetime not null
+
  );
+ 
  
  describe cliente;
  
-insert into cliente (nomeCompleto, cpf , rg, email, celular, numeroCartao, nomeTitular, validade, cvv, checkin, checkout, idquarto) value
+ drop table cliente;
+ 
+ 
+ 
+insert into cliente (nomeCompleto, cpf , rg, email, celular, numeroCartao, nomeTitular, validade, cvv, checkin, checkout) values
 ("josé  de assis", "829.942.570-09", "48.353.888-7", "josedeassis@gmail.com" , "(96) 99338-2803", "5526 4886 2543", "josé de assis", "2025-03-31","452",
-"2023-11-02  14:00:00",  "2023-11-05 12:00:00", 1);
+"2023-11-02  14:00:00",  "2023-11-05 12:00:00");
 
 
-insert into cliente (nomeCompleto, cpf , rg, email, celular, numeroCartao, nomeTitular, validade, cvv, checkin, checkout, idquarto) value
-("paulo ferreira", "829.942.570-01", "18.353.888-7", "pauloferreiro@gmail.com" , "(11) 99537-2203", "453 9876 6533", "paulo ferreira", "2026-04-01","452",
-"2023-09-09  14:00:00",  "2023-10-05 12:00:00", 6);
+insert into cliente (nomeCompleto, cpf , rg, email, celular, numeroCartao, nomeTitular, validade, cvv, checkin, checkout) values
+("paulo ferreira", "712.689.550.04", "18.353.888-7", "pauloferreiro@gmail.com" , "(11) 99537-2203", "453 9876 6533", "paulo ferreira", "2026-04-01","452",
+"2023-09-09  14:00:00",  "2023-10-05 12:00:00");
+
 
 
 
@@ -199,4 +231,3 @@ select cliente.nomeCompleto as Nome, date_format(cliente.checkout, '%d/%m/%Y - %
 /*ATIVIDADE AVALIATIVA */
 
  
-
