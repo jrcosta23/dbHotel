@@ -33,7 +33,7 @@ idquarto int primary key auto_increment,
 andar varchar(10) not null,
 tipoQuarto varchar(50) not null,
 ocupacaMax int  not null,
-situacao char(3)  not null,
+disponibilidade char(3)  not null,
 nome varchar(50) not null,
 descricao text,
 foto varchar(255) not null,
@@ -122,6 +122,7 @@ insert into reservas(idpedido, idquarto, ckeckin, checkout ) values (1,6, "2023-
 insert into reservas (idpedido, idquarto, ckeckin, checkout) values (1,1, "2023-09-09  14:00:00",  "2023-10-05 12:00:00");
     
 select * from  reservas;
+
 select reservas.idreserva, pedido.idpedido,
 quartos.idquarto, quartos.nome, quartos.andar, quartos.numeroQuarto
 from (reservas inner join  pedido on  reservas.idpedido = pedido.idpedido)
@@ -132,14 +133,30 @@ inner join quartos on reservas.idquarto = quartos.idquarto;
 
 select sum(quartos.preco) as total  from  reservas inner join quartos on 
 reservas.idquarto = quartos.idquarto where idPedido = 1;
+ 
+/* total do pedido pelo cliente */
+select sum(quartos.preco) as total from reservas inner join quartos on reservas.idquarto = quartos.idquarto where idpedido = 1;
 
+select * from quartos;
 
-/* cliente cecília vitória Barros -  idPedido 2
-quarto  reservas: superior  premier twin (7º andar, numero 703, preco/diária: 1150.90
+/* buscar o nome do cliente, andar, número do quarto e checkout  somente daqueles
+cuja data checkout  ja passou ou e igual a  data do  sistema */
+select cliente.nomeCompleto, quartos.andar, quartos.numeroQuarto, reservas.ckeckout from
+cliente inner join pedido on cliente.idCliente = pedido.idCliente inner join 
+reservas on reservas.idpedido = pedido.idpedido inner join  quartos
+on reservas.idquarto =  quartos.idquarto where  reservas.ckeckout <= current_timestamp();
 
-check-in: 27/11/2023 as 10h00
-check-in: 08/12/2023 as 10h00
+ update reservas inner join quartos on reservas.idquarto = quartos.idquarto
+ set quartos.disponibilidade = "sim" where reservas.ckeckout < current_timestamp ();
+ 
+ /* buscar o nome cliente, andar, número  do quarto, ckeckout (com data formatada em 99/99/9999) e
+ o cálculo de  quantos dias faltam para a reserva do cliente  encerrar (dias restartes = data do ckeckout - data de hoje) */
 
-
+select cliente.nomeCompleto, quartos.andar, quartos.numeroQuarto, 
+date_format(reservas.ckeckout, '%d/%m/%Y') as ckeckout, 
+datediff(reservas.ckeckout, curdate()) as  dias_restantes
+from cliente inner join pedido on cliente.idCliente = pedido.idCliente inner join
+reservas on reservas.idpedido = pedido.idpedido inner join quartos 
+on reservas.idquarto where reservas.ckeckout > current_timestamp()
 
 
