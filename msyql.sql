@@ -8,6 +8,7 @@ create database dbHotel;
 use  dbHotel;
 
 
+
 create table funcionarios (
 idFunc int primary  key auto_increment,
 nomefunc varchar (100) not null,
@@ -43,6 +44,7 @@ tipoCama varchar(20),
 varanda char(3)
 );
 describe  quartos;
+
 
 insert into quartos (andar, tipoQuarto, ocupacaMax, situacao, nome, descricao, foto, preco, cafeDaManha, precoCafe, numeroQuarto, tipoCama, varanda) values
 ("5º" , "superior premier", 3, "não",
@@ -126,10 +128,18 @@ from (reservas inner join  pedido on  reservas.idpedido = pedido.idpedido)
 inner join quartos on reservas.idquarto = quartos.idquarto;
 
 
-   
-    
-    
-    
-    
-    
-   
+/* Soma total do Pedido  feito pelo cliente */
+
+select sum(quartos.preco) as total  from  reservas inner join quartos on 
+reservas.idquarto = quartos.idquarto where idPedido = 1;
+
+
+/* cliente cecília vitória Barros -  idPedido 2
+quarto  reservas: superior  premier twin (7º andar, numero 703, preco/diária: 1150.90
+
+check-in: 27/11/2023 as 10h00
+check-in: 08/12/2023 as 10h00
+
+
+
+
